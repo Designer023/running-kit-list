@@ -1,6 +1,8 @@
 import React, { Dispatch, ReactElement } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { Slider, Checkbox, FormGroup, FormControlLabel, Button, Box } from "@mui/material";
+
 import { EventState, Action } from "../../Reducers/event";
 
 import { Select, CheckBox, RangeSlider } from "../FormFields";
@@ -26,7 +28,10 @@ const Form = ({ state, dispatch }: FormType): ReactElement => (
             <FilterItem>
                 {/* eslint-disable-next-line no-nested-ternary */}
                 <h6 className="mb-1">Temperature {state.temperature >= 20 ? "🥵" : state.temperature <= 5 ? "🥶" : "🙂"}</h6>
-                <RangeSlider value={state.temperature} step={5} min={-10} max={40} id="temperature" dispatch={dispatch} />
+                <Slider min={-20} sx={{
+                    marginTop: 4
+                }} max={50} step={5} valueLabelDisplay={"on"} value={state.temperature} onChange={({target: {value}}) => dispatch({ type: "temperature", payload: Number(value) }) } />
+                <RangeSlider value={state.temperature} step={5} min={-20} max={50} id="temperature" dispatch={dispatch} />
                 <h5>{state.temperature}&deg;C</h5>
             </FilterItem>
             <FilterItem>
@@ -63,6 +68,10 @@ const Form = ({ state, dispatch }: FormType): ReactElement => (
         </FilterStyledRow>
         <FilterStyledRow>
             <FilterItem>
+                <FormGroup>
+                    <FormControlLabel control={<Checkbox value={state.dark} title={"Dark / Dusk"} onChange={() => dispatch({type: "dark", payload: !state.dark})} />
+                    } label="Label"  />
+                </FormGroup>
                 <CheckBox id="dark" checked={state.dark} title="Dark 🌛" dispatch={dispatch} />
             </FilterItem>
             <FilterItem>
@@ -75,11 +84,11 @@ const Form = ({ state, dispatch }: FormType): ReactElement => (
                 <CheckBox id="scenic" checked={state.scenic} title="Scenic 🤳" dispatch={dispatch} />
             </FilterItem>
         </FilterStyledRow>
-        <FilterStyledRow>
-            <button type="button" className="btn btn-dark btn-sm" onClick={() => dispatch({ type: "RESET" })}>
-                Reset
-            </button>
-        </FilterStyledRow>
+        <Box mt={4}>
+            <Button variant="contained" onClick={() => dispatch({ type: "GENERATE" })} color={"primary"} >Generate</Button>
+            <Button variant="contained" onClick={() => dispatch({ type: "RESET" })} color={"warning"} >Reset</Button>
+
+        </Box>
     </>
 );
 

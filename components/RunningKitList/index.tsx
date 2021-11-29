@@ -7,6 +7,7 @@ import { ULStyled } from "../UI";
 import KitItem, { ListItemType } from "../KitItem";
 import eventReducer, { initialState } from "../../Reducers/event";
 import useFilteredList from "../../hooks/useFilteredList";
+import { Box, Container, Slider, Typography } from "@mui/material";
 
 const Index = (): ReactElement => {
     const [state, dispatch] = useReducer(eventReducer, initialState);
@@ -34,10 +35,61 @@ const Index = (): ReactElement => {
     const filteredPre = useFilteredList(preActivity, state);
     const filteredAfter = useFilteredList(after, state);
 
+    const formConfig = [
+        {
+            type: "slider",
+            id: "temperature",
+            label: "Temperature",
+            step: 5,
+            min: -20,
+            max: 50,
+            default: state.temperature,
+            valueLabelFormat: `${state.temperature}°C`,
+          marks:[
+            {
+              value: -20,
+              label: '-20°C 🐧',
+            },
+            {
+              value: 0,
+              label: '0°C 🥶',
+            },
+            {
+              value: 15,
+              label: '15°C 😊',
+            },
+            {
+              value: 30,
+              label: '30°C 🥵',
+            },
+            {
+              value: 50,
+              label: '50°C 🔥',
+            },
+
+          ]
+        }
+    ]
     return (
-        <div>
+        <Box>
             <div>
-                <h4>Criteria</h4>
+                <Typography variant={"h4"}>Criteria</Typography>
+              { formConfig.map(field => {
+
+                switch (field.type) {
+                  case "slider":
+                    return (
+                      <>
+                      <Slider min={field.min} marks={field.marks} sx={{
+                        marginTop: 4
+                      }} valueLabelFormat={field.valueLabelFormat} max={field.max} step={field.step} valueLabelDisplay={"on"} value={state[field.id]} onChange={({target: {value}}) => dispatch({ type: field.id, payload: Number(value) }) } />
+                      </>
+                    )
+                    break;
+                  default:
+                    return null
+                }
+              })}
                 <Form state={state} dispatch={dispatch} />
                 <hr />
             </div>
@@ -108,7 +160,7 @@ const Index = (): ReactElement => {
             </div>
 
             <hr />
-        </div>
+        </Box>
     );
 };
 
